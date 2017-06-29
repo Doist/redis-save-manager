@@ -1,0 +1,3 @@
+Command redis-save-manager disables automatic persistence on a set of redis
+hosts and then runs BGSAVE on them sequentially in a loop, waiting for save
+to complete so that only one redis instance is saving data at a time.
