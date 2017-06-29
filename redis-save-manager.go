@@ -20,14 +20,14 @@ import (
 
 func main() {
 	args := struct {
-		MaxDuration time.Duration `flag:"duration,exit after working for this long"`
-		Addresses   string        `flag:"file,file with redis addresses (host:port), one per line"`
+		Deadline  time.Duration `flag:"deadline,exit after working for this long"`
+		Addresses string        `flag:"file,file with redis addresses (host:port), one per line"`
 	}{
-		MaxDuration: time.Hour,
+		Deadline: time.Hour,
 	}
 	autoflags.Parse(&args)
-	if args.MaxDuration < time.Minute {
-		args.MaxDuration = time.Minute
+	if args.Deadline < time.Minute {
+		args.Deadline = time.Minute
 	}
 	log := log.New(os.Stderr, "", log.LstdFlags)
 	addrs, err := readLines(args.Addresses)
@@ -39,11 +39,11 @@ func main() {
 		j := rand.Intn(i + 1)
 		addrs[i], addrs[j] = addrs[j], addrs[i]
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), args.MaxDuration)
+	ctx, cancel := context.WithTimeout(context.Background(), args.Deadline)
 	defer cancel()
 	if err := do(ctx, log, addrs); err != nil {
 		if err == context.DeadlineExceeded {
-			log.Print("timeout of %v reached", args.MaxDuration)
+			log.Print("deadline of %v reached", args.Deadline)
 			return
 		}
 		log.Fatal(err)
