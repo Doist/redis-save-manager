@@ -43,7 +43,7 @@ func main() {
 	defer cancel()
 	if err := do(ctx, log, addrs); err != nil {
 		if err == context.DeadlineExceeded {
-			log.Print("deadline of %v reached", args.Deadline)
+			log.Printf("deadline of %v reached", args.Deadline)
 			return
 		}
 		log.Fatal(err)
