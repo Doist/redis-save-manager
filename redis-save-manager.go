@@ -76,7 +76,7 @@ func do(ctx context.Context, log logger.Interface, addrs []string) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(10 * time.Second):
+		case <-time.After(5 * time.Second):
 		}
 	}
 }
@@ -94,7 +94,7 @@ func saveBlocking(ctx context.Context, addr string) error {
 	if err := conn.Cmd("BGSAVE").Err; err != nil {
 		return err
 	}
-	t := time.NewTicker(10 * time.Second)
+	t := time.NewTicker(5 * time.Second)
 	defer t.Stop()
 	for {
 		select {
