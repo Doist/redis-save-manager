@@ -65,7 +65,7 @@ func do(ctx context.Context, log logger.Interface, addrs []string) error {
 			if err := saveBlocking(ctx, addr); err != nil {
 				log.Printf("%s: %v", addr, err)
 			} else {
-				log.Printf("%s: saved in %v", addr, time.Since(begin))
+				log.Printf("%s: saved in %v", addr, time.Since(begin).Round(time.Second))
 			}
 			select {
 			case <-ctx.Done():
