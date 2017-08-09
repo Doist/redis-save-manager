@@ -22,8 +22,10 @@ func main() {
 	args := struct {
 		Deadline  time.Duration `flag:"deadline,exit after working for this long"`
 		Addresses string        `flag:"file,file with redis addresses (host:port), one per line"`
+		Sleep     time.Duration `flag:"sleep,delay between each cycle"`
 	}{
 		Deadline: time.Hour,
+		Sleep:    5 * time.Second,
 	}
 	autoflags.Parse(&args)
 	if args.Deadline < time.Minute {
@@ -41,7 +43,7 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), args.Deadline)
 	defer cancel()
-	if err := do(ctx, log, addrs); err != nil {
+	if err := do(ctx, log, args.Sleep, addrs); err != nil {
 		if err == context.DeadlineExceeded {
 			log.Printf("deadline of %v reached", args.Deadline)
 			return
@@ -50,7 +52,7 @@ func main() {
 	}
 }
 
-func do(ctx context.Context, log logger.Interface, addrs []string) error {
+func do(ctx context.Context, log logger.Interface, loopDelay time.Duration, addrs []string) error {
 	if len(addrs) == 0 {
 		return errors.New("empty addresses")
 	}
@@ -76,7 +78,7 @@ func do(ctx context.Context, log logger.Interface, addrs []string) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(5 * time.Second):
+		case <-time.After(loopDelay):
 		}
 	}
 }
