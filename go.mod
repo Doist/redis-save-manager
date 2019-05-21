@@ -1,4 +1,4 @@
-module github.com/artyom/redis-save-manager
+module github.com/Doist/redis-save-manager
 
 require (
 	github.com/artyom/autoflags v1.1.0
